@@ -1,4 +1,2 @@
-# Hi
-# I'm Nicole Vu, a Computer Science student at University of Minnesota
-# This is a collection of the projects I did during summer 2022
-# Hope you enjoy!
+# Hi! I'm Nicole Vu, a CS student from University of Minnesota
+# This is my collection of the projects during summer 2022. Enjoy!
