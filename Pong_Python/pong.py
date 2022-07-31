@@ -3,6 +3,8 @@
 
 import turtle
 import random
+import numpy
+import math
 
 window = turtle.Screen() # create the window for the game
 window.title("Pong")
@@ -45,8 +47,9 @@ ball.shape("circle")
 ball.color("#E3D081")
 ball.penup()
 ball.goto(0, 0) # initial coordination
-ball.dx = 0.2
-ball.dy = 0.2
+delta_speed = 1
+ball.dx = delta_speed
+ball.dy = delta_speed
 
 # Pen
 pen = turtle.Turtle()
@@ -114,13 +117,17 @@ while True:
         ball.dy *= -1
     if ball.xcor() > 390:
         ball.goto(0,0)
-        ball.dx *= -1
+        offset = random.randrange(9,16)
+        ball.dx = random.choice([-1,1]) * numpy.sin(4*math.pi/offset)
+        ball.dy = -1 * numpy.cos(4*math.pi/offset)
         score_a += 1
         pen.clear() # clear the previous score 
         pen.write(f"{score_a}  {score_b}", align="center", font=("Courier", 30, "bold"))
     elif ball.xcor() < -390:
         ball.goto(0,0)
-        ball.dx *= -1
+        offset = random.randrange(9,16)
+        ball.dx = random.choice([-1,1]) * numpy.sin(4*math.pi/offset)
+        ball.dy = numpy.cos(4*math.pi/offset)
         score_b += 1
         pen.clear() # clear the previous score 
         pen.write(f"{score_a}  {score_b}", align="center", font=("Courier", 30, "bold"))
