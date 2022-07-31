@@ -47,9 +47,21 @@ ball.shape("circle")
 ball.color("#E3D081")
 ball.penup()
 ball.goto(0, 0) # initial coordination
-delta_speed = 1
-ball.dx = delta_speed
-ball.dy = delta_speed
+delta_speed = 0.1 # speed of the ball
+offset = random.randrange(1,5)
+ball.dx = math.sqrt(delta_speed) * random.choice([-1,1]) * numpy.sin(math.pi*offset/16)
+ball.dy = math.sqrt(delta_speed) * random.choice([-1,1]) * numpy.sin(math.pi*offset/16)
+
+# Instruction
+instr = turtle.Turtle()
+instr.speed(0)
+instr.color("#F1F7ED")
+instr.penup()
+instr.hideturtle()
+instr.goto(-210,-260)
+instr.write("W: up   S: down", align="center", font=("Courier", 15, "bold"))
+instr.goto(210,-260)
+instr.write("Up: up   Down: down", align="center", font=("Courier", 15, "bold"))
 
 # Pen
 pen = turtle.Turtle()
@@ -117,17 +129,21 @@ while True:
         ball.dy *= -1
     if ball.xcor() > 390:
         ball.goto(0,0)
-        offset = random.randrange(9,16)
-        ball.dx = random.choice([-1,1]) * numpy.sin(4*math.pi/offset)
-        ball.dy = -1 * numpy.cos(4*math.pi/offset)
+        offset = random.randrange(1,5)
+        # set the dx to negative and dy to either negative or positive when player b lost previously
+        # so that the ball goes to the left side
+        ball.dx = -1 * math.sqrt(delta_speed) * numpy.cos(math.pi*offset/16)
+        ball.dy = math.sqrt(delta_speed) * random.choice([-1,1]) * numpy.sin(math.pi*offset/16)
         score_a += 1
         pen.clear() # clear the previous score 
         pen.write(f"{score_a}  {score_b}", align="center", font=("Courier", 30, "bold"))
     elif ball.xcor() < -390:
         ball.goto(0,0)
-        offset = random.randrange(9,16)
-        ball.dx = random.choice([-1,1]) * numpy.sin(4*math.pi/offset)
-        ball.dy = numpy.cos(4*math.pi/offset)
+        offset = random.randrange(1,5)
+        # set dx to positive and dy to either negative or positive when player a lost previously
+        # so that the ball goes to the right side
+        ball.dx = math.sqrt(delta_speed) * numpy.cos(math.pi*offset/16)
+        ball.dy = math.sqrt(delta_speed) * random.choice([-1,1]) * numpy.sin(math.pi*offset/16)
         score_b += 1
         pen.clear() # clear the previous score 
         pen.write(f"{score_a}  {score_b}", align="center", font=("Courier", 30, "bold"))
