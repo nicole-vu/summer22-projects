@@ -8,7 +8,7 @@ from tkinter import messagebox
 class cube(object):
     rows = 20
     w = 500
-    def __init__(self, start, dirnx=1, dirny=0, color=(255,0,0)):
+    def __init__(self, start, dirnx=1, dirny=0, color=(145,199,177)):
         self.pos = start
         self.dirnx = 1
         self.dirny = 0
@@ -30,8 +30,8 @@ class cube(object):
             radius = 3
             circleMiddle = (i*dis+center-radius, j*dis+8)
             circleMiddle2 = (i*dis + dis - radius*2, j*dis+8)
-            pygame.draw.circle(surface, (0,0,0), circleMiddle, radius)
-            pygame.draw.circle(surface, (0,0,0), circleMiddle2, radius)
+            pygame.draw.circle(surface, (85,73,75), circleMiddle, radius)
+            pygame.draw.circle(surface, (85,73,75), circleMiddle2, radius)
 
 class snake(object):
     body = [] # an list of cubes
@@ -134,7 +134,7 @@ def drawGrid (w, rows, surface):
 
 def redrawWindow(surface):
     global rows, width, s, snack
-    surface.fill((0,0,0)) # set the bg color to black
+    surface.fill((85,73,75)) # set the bg color to black
     s.draw(surface)
     snack.draw(surface)
     drawGrid(width, rows, surface)
@@ -167,8 +167,8 @@ def main():
     width = 500
     rows = 20
     window = pygame.display.set_mode((width, width)) # create game window
-    s = snake((255,0,0), (10,10)) # snake object
-    snack = cube(randomSnack(rows, s), color = (0,255,0)) 
+    s = snake((145,199,177), (10,10)) # snake object
+    snack = cube(randomSnack(rows, s), color = (227,208,129)) 
     flag = True
 
     clock = pygame.time.Clock()
@@ -179,7 +179,7 @@ def main():
         s.move()
         if s.body[0].pos == snack.pos:
             s.addCube()
-            snack = cube(randomSnack(rows, s), color = (0,255,0)) 
+            snack = cube(randomSnack(rows, s), color = (227,208,129)) 
 
         for x in range(len(s.body)):
             if s.body[x].pos in list(map(lambda z:z.pos, s.body[x+1:])): 
