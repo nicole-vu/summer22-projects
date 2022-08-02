@@ -30,28 +30,25 @@ class cube(object):
             pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
 
         elif self.shape == "head": 
-            # if the snake is only 1 block, draw it as a circle
-            if len(s.body) == 1:
-                pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
-                pygame.draw.rect(surface, (192,37,51), (i*dis+dis//2-1, j*dis+dis-2, 2, 6))
 
-            # if the snake is more than 1 cube, draw the head based on direction the snake is heading
-            elif self.dirnx == 1 and self.dirny == 0:
-                pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+1, dis//2, dis-2))
-                pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
+            pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
+            # draw the head based on direction the snake is heading
+            if self.dirnx == 1 and self.dirny == 0:
                 pygame.draw.rect(surface, (192,37,51), (i*dis+dis-2, j*dis+dis//2+3, 6, 2)) # tongue
+                if len(s.body) != 1:
+                    pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+1, dis//2, dis-2))
             elif self.dirnx == -1 and self.dirny == 0:
-                pygame.draw.rect(surface, self.color, (i*dis+dis//2, j*dis+1, dis//2, dis-2))
-                pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
                 pygame.draw.rect(surface, (192,37,51), (i*dis-4, j*dis+dis//2+3, 6, 2))
+                if len(s.body) != 1:    
+                    pygame.draw.rect(surface, self.color, (i*dis+dis//2, j*dis+1, dis//2, dis-2))
             elif self.dirnx == 0 and self.dirny == 1:
-                pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+1, dis-2, dis//2))
-                pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
                 pygame.draw.rect(surface, (192,37,51), (i*dis+dis//2-1, j*dis+dis-2, 2, 6))
+                if len(s.body) != 1:
+                    pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+1, dis-2, dis//2))
             elif self.dirnx == 0 and self.dirny == -1:
-                pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+dis//2, dis-2, dis//2))
-                pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)  
                 pygame.draw.rect(surface, (192,37,51), (i*dis+dis//2-1, j*dis-4, 2, 6)) 
+                if len(s.body) != 1: 
+                    pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+dis//2, dis-2, dis//2))
             
             # draw 2 eyes
             pygame.draw.circle(surface, (85,73,75), (i*dis+dis//2-5, j*dis+10), 3)
