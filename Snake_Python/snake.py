@@ -32,8 +32,8 @@ class cube(object):
         if eyes: # draw the eyes
             center = dis//2
             radius = 3
-            circleMiddle = (i*dis+center-radius, j*dis+8)
-            circleMiddle2 = (i*dis + dis - radius*2, j*dis+8)
+            circleMiddle = (i*dis+center-5, j*dis+10)
+            circleMiddle2 = (i*dis+center+5, j*dis+10)
             pygame.draw.circle(surface, (85,73,75), circleMiddle, radius)
             pygame.draw.circle(surface, (85,73,75), circleMiddle2, radius)
 
