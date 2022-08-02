@@ -9,7 +9,7 @@ class cube(object):
     global s
     rows = 20
     w = 500
-    def __init__(self, start, dirnx=1, dirny=0, color=(145,199,177), shape="rect"):
+    def __init__(self, start, dirnx=1, dirny=0, color=(120,210,130), shape="rect"):
         self.pos = start
         self.dirnx = 1
         self.dirny = 0
@@ -29,8 +29,11 @@ class cube(object):
         if self.shape == "cir":
             pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
         elif self.shape == "head": 
+            # if the snake is only 1 block, draw it as a circle
             if len(s.body) == 1:
                 pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
+
+            # if the snake is more than 1 cube, draw the head based on direction the snake is heading
             elif self.dirnx == 1 and self.dirny == 0:
                 pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+1, dis//2, dis-2))
                 pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
@@ -43,12 +46,24 @@ class cube(object):
             elif self.dirnx == 0 and self.dirny == -1:
                 pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+dis//2, dis-2, dis//2))
                 pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)   
-
-
+            
+            # draw 2 eyes
             pygame.draw.circle(surface, (85,73,75), (i*dis+dis//2-5, j*dis+10), 3)
             pygame.draw.circle(surface, (85,73,75), (i*dis+dis//2+5, j*dis+10), 3)
         elif self.shape == "tail":
-            pass
+            if self.dirnx == -1 and self.dirny == 0:
+                pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+1, dis//2, dis-2))
+                pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
+            elif self.dirnx == 1 and self.dirny == 0:
+                pygame.draw.rect(surface, self.color, (i*dis+dis//2, j*dis+1, dis//2, dis-2))
+                pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
+            elif self.dirnx == 0 and self.dirny == -1:
+                pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+1, dis-2, dis//2))
+                pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
+            elif self.dirnx == 0 and self.dirny == 1:
+                pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+dis//2, dis-2, dis//2))
+                pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2) 
+
         else:
             pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+1, dis-2, dis-2)) # draw inside of the lines
             
@@ -137,11 +152,11 @@ class snake(object):
         for i, c in enumerate(self.body):
             if i == 0:
                 c.shape = "head"
-                c.draw(surface) # only the head has eyes
-                
+            elif i == len(self.body)-1:
+                c.shape = "tail"
             else:
                 c.shape = "rect"
-                c.draw(surface)
+            c.draw(surface)
 
 def drawGrid (w, rows, surface):
     sizeBtwn = w // rows # how big each square in the row is
@@ -190,8 +205,8 @@ def main():
     width = 500
     rows = 20
     window = pygame.display.set_mode((width, width)) # create game window
-    s = snake((145,199,177), (10,10)) # snake object
-    snack = cube(randomSnack(rows, s), color = (227,208,129), shape = "cir") 
+    s = snake((120,210,130), (10,10)) # snake object
+    snack = cube(randomSnack(rows, s), color = (192,37,51), shape = "cir") 
     flag = True
 
     clock = pygame.time.Clock()
@@ -202,7 +217,7 @@ def main():
         s.move()
         if s.body[0].pos == snack.pos:
             s.addCube()
-            snack = cube(randomSnack(rows, s), color = (227,208,129), shape = "cir") 
+            snack = cube(randomSnack(rows, s), color = (192,37,51), shape = "cir") 
 
         for x in range(len(s.body)):
             if s.body[x].pos in list(map(lambda z:z.pos, s.body[x+1:])): 
