@@ -1,4 +1,4 @@
-
+# Adapted from TechWithTim
 import pygame
 import math
 import random
@@ -8,23 +8,27 @@ from tkinter import messagebox
 class cube(object):
     rows = 20
     w = 500
-    def __init__(self, start, dirnx=1, dirny=0, color=(145,199,177)):
+    def __init__(self, start, dirnx=1, dirny=0, color=(145,199,177), shape="rect"):
         self.pos = start
         self.dirnx = 1
         self.dirny = 0
         self.color = color
+        self.shape = shape
 
     def move(self, dirnx, dirny):
         self.dirnx = dirnx
         self.dirny = dirny
         self.pos = (self.pos[0] + self.dirnx, self.pos[1] + self.dirny)
 
-    def draw(self, surface, eyes=False):
+    def draw(self, surface, eyes=False, snack=False):
         dis = self.w // self.rows
         i = self.pos[0]
         j = self.pos[1]
 
-        pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+1, dis-2, dis-2)) # draw inside of the lines
+        if self.shape != "rect":
+            pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
+        else: pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+1, dis-2, dis-2)) # draw inside of the lines
+
         if eyes: # draw the eyes
             center = dis//2
             radius = 3
@@ -168,7 +172,7 @@ def main():
     rows = 20
     window = pygame.display.set_mode((width, width)) # create game window
     s = snake((145,199,177), (10,10)) # snake object
-    snack = cube(randomSnack(rows, s), color = (227,208,129)) 
+    snack = cube(randomSnack(rows, s), color = (227,208,129), shape = "cir") 
     flag = True
 
     clock = pygame.time.Clock()
@@ -179,7 +183,7 @@ def main():
         s.move()
         if s.body[0].pos == snack.pos:
             s.addCube()
-            snack = cube(randomSnack(rows, s), color = (227,208,129)) 
+            snack = cube(randomSnack(rows, s), color = (227,208,129), shape = "cir") 
 
         for x in range(len(s.body)):
             if s.body[x].pos in list(map(lambda z:z.pos, s.body[x+1:])): 
