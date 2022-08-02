@@ -6,6 +6,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 class cube(object):
+    global s
     rows = 20
     w = 500
     def __init__(self, start, dirnx=1, dirny=0, color=(145,199,177), shape="rect"):
@@ -20,22 +21,37 @@ class cube(object):
         self.dirny = dirny
         self.pos = (self.pos[0] + self.dirnx, self.pos[1] + self.dirny)
 
-    def draw(self, surface, eyes=False, snack=False):
+    def draw(self, surface):
         dis = self.w // self.rows
         i = self.pos[0]
         j = self.pos[1]
 
-        if self.shape != "rect":
+        if self.shape == "cir":
             pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
-        else: pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+1, dis-2, dis-2)) # draw inside of the lines
+        elif self.shape == "head": 
+            if len(s.body) == 1:
+                pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
+            elif self.dirnx == 1 and self.dirny == 0:
+                pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+1, dis//2, dis-2))
+                pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
+            elif self.dirnx == -1 and self.dirny == 0:
+                pygame.draw.rect(surface, self.color, (i*dis+dis//2, j*dis+1, dis//2, dis-2))
+                pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
+            elif self.dirnx == 0 and self.dirny == 1:
+                pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+1, dis-2, dis//2))
+                pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
+            elif self.dirnx == 0 and self.dirny == -1:
+                pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+dis//2, dis-2, dis//2))
+                pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)   
 
-        if eyes: # draw the eyes
-            center = dis//2
-            radius = 3
-            circleMiddle = (i*dis+center-5, j*dis+10)
-            circleMiddle2 = (i*dis+center+5, j*dis+10)
-            pygame.draw.circle(surface, (85,73,75), circleMiddle, radius)
-            pygame.draw.circle(surface, (85,73,75), circleMiddle2, radius)
+
+            pygame.draw.circle(surface, (85,73,75), (i*dis+dis//2-5, j*dis+10), 3)
+            pygame.draw.circle(surface, (85,73,75), (i*dis+dis//2+5, j*dis+10), 3)
+        elif self.shape == "tail":
+            pass
+        else:
+            pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+1, dis-2, dis-2)) # draw inside of the lines
+            
 
 class snake(object):
     body = [] # an list of cubes
@@ -120,8 +136,11 @@ class snake(object):
     def draw(self, surface):
         for i, c in enumerate(self.body):
             if i == 0:
-                c.draw(surface, True) # only the head has eyes
+                c.shape = "head"
+                c.draw(surface) # only the head has eyes
+                
             else:
+                c.shape = "rect"
                 c.draw(surface)
 
 def drawGrid (w, rows, surface):
