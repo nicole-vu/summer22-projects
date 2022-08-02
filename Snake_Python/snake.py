@@ -33,26 +33,32 @@ class cube(object):
             # if the snake is only 1 block, draw it as a circle
             if len(s.body) == 1:
                 pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
+                pygame.draw.rect(surface, (192,37,51), (i*dis+dis//2-1, j*dis+dis-2, 2, 6))
 
             # if the snake is more than 1 cube, draw the head based on direction the snake is heading
             elif self.dirnx == 1 and self.dirny == 0:
                 pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+1, dis//2, dis-2))
                 pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
+                pygame.draw.rect(surface, (192,37,51), (i*dis+dis-2, j*dis+dis//2+3, 6, 2)) # tongue
             elif self.dirnx == -1 and self.dirny == 0:
                 pygame.draw.rect(surface, self.color, (i*dis+dis//2, j*dis+1, dis//2, dis-2))
                 pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
+                pygame.draw.rect(surface, (192,37,51), (i*dis-4, j*dis+dis//2+3, 6, 2))
             elif self.dirnx == 0 and self.dirny == 1:
                 pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+1, dis-2, dis//2))
                 pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
+                pygame.draw.rect(surface, (192,37,51), (i*dis+dis//2-1, j*dis+dis-2, 2, 6))
             elif self.dirnx == 0 and self.dirny == -1:
                 pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+dis//2, dis-2, dis//2))
-                pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)   
+                pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)  
+                pygame.draw.rect(surface, (192,37,51), (i*dis+dis//2-1, j*dis-4, 2, 6)) 
             
             # draw 2 eyes
             pygame.draw.circle(surface, (85,73,75), (i*dis+dis//2-5, j*dis+10), 3)
             pygame.draw.circle(surface, (85,73,75), (i*dis+dis//2+5, j*dis+10), 3)
 
         elif self.shape == "tail":
+            # change the direction of the tail according to the previous block
             prevx = s.body[len(s.body)-2].dirnx
             prevy = s.body[len(s.body)-2].dirny
             if prevx == -1 and prevy == 0:
@@ -103,7 +109,7 @@ class snake(object):
 
                 elif keys[pygame.K_UP]:
                     self.dirnx = 0
-                    self.dirny = -1  # downward is the positive y direction 
+                    self.dirny = -1 
                     self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
 
                 elif keys[pygame.K_DOWN]:
