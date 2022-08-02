@@ -28,6 +28,7 @@ class cube(object):
 
         if self.shape == "cir":
             pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
+
         elif self.shape == "head": 
             # if the snake is only 1 block, draw it as a circle
             if len(s.body) == 1:
@@ -50,17 +51,20 @@ class cube(object):
             # draw 2 eyes
             pygame.draw.circle(surface, (85,73,75), (i*dis+dis//2-5, j*dis+10), 3)
             pygame.draw.circle(surface, (85,73,75), (i*dis+dis//2+5, j*dis+10), 3)
+
         elif self.shape == "tail":
-            if self.dirnx == -1 and self.dirny == 0:
+            prevx = s.body[len(s.body)-2].dirnx
+            prevy = s.body[len(s.body)-2].dirny
+            if prevx == -1 and prevy == 0:
                 pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+1, dis//2, dis-2))
                 pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
-            elif self.dirnx == 1 and self.dirny == 0:
+            elif prevx == 1 and prevy == 0:
                 pygame.draw.rect(surface, self.color, (i*dis+dis//2, j*dis+1, dis//2, dis-2))
                 pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
-            elif self.dirnx == 0 and self.dirny == -1:
+            elif prevx == 0 and prevy == -1:
                 pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+1, dis-2, dis//2))
                 pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2)
-            elif self.dirnx == 0 and self.dirny == 1:
+            elif prevx == 0 and prevy == 1:
                 pygame.draw.rect(surface, self.color, (i*dis+1, j*dis+dis//2, dis-2, dis//2))
                 pygame.draw.circle(surface, self.color, (i*dis+dis//2, j*dis+dis//2), dis//2) 
 
@@ -113,7 +117,7 @@ class snake(object):
                 turn = self.turns[p]
                 c.move(turn[0], turn[1])
                 if i == len(self.body)-1:
-                    self.turns.pop(p)
+                     self.turns.pop(p)
             else:
                 # if we reach the end of the screen
                 if c.dirnx == -1 and c.pos[0] <= 0: c.pos = (c.rows-1, c.pos[1])
