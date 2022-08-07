@@ -6,6 +6,11 @@ import sys
 ROW_COUNT = 6
 COLUMN_COUNT = 7
 
+P1_COLOR = (0,255,0)
+P2_COLOR = (255,0,0)
+BOARD_COLOR = (0,0,255)
+SCREEN_COLOR = (0,0,0)
+
 def create_board():
     board = np.zeros((ROW_COUNT, COLUMN_COUNT)) # create a zero matrix of 6 rows and 7 columns
     return board
@@ -53,7 +58,10 @@ def winning_move(board, piece):
                 return True
 
 def draw_board(board):
-    pass
+    for c in range(COLUMN_COUNT):
+        for r in range(ROW_COUNT):
+            pygame.draw.rect(screen, BOARD_COLOR, (c*SQUARESIZE, SQUARESIZE+r*SQUARESIZE, SQUARESIZE, SQUARESIZE))
+            pygame.draw.circle(screen, SCREEN_COLOR, (c*SQUARESIZE+SQUARESIZE//2, r*SQUARESIZE+SQUARESIZE+SQUARESIZE//2), RADIUS)
 
 
 board = create_board()
@@ -71,8 +79,11 @@ height = (ROW_COUNT+1) * SQUARESIZE
 
 size = (width, height)
 
-screen = pygame.display.set_mode(size)
+RADIUS = SQUARESIZE//2 - 5 
 
+screen = pygame.display.set_mode(size)
+draw_board(board)
+pygame.display.update()
 
 while not game_over:
 
