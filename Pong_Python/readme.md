@@ -1,5 +1,5 @@
 # Pong game
-# Adapted from TokyoEdTech
+# Adapted from TokyoEdTech's Pong https://www.youtube.com/channel/UC2vm-0XX5RkWCXWwtBZGOXg
 # New features:
 #   - Changed game designs
 #   - Fixed paddles going out of the screen problem from the original project
