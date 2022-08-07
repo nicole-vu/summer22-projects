@@ -36,13 +36,13 @@ def winning_move(board, turn, row, col):
     right_count = 1
     left_count = 1
     # right of the newest piece
-    while (col + right_count < COLUMN_COUNT) and (right_count < STREAK) and board[row][col+right_count] == turn:
+    while (col + right_count < COLUMN_COUNT) and (board[row][col+right_count] == turn) and (right_count < STREAK):
         right_count += 1
         streak_count += 1
         if streak_count >= STREAK:
             return True
     # left of the newest piece
-    while (col - left_count >= 0) and (left_count < STREAK) and board[row][col-left_count] == turn:
+    while (col - left_count >= 0) and (board[row][col-left_count] == turn) and (left_count < STREAK) :
         left_count += 1
         streak_count += 1
         if streak_count >= STREAK:
@@ -53,13 +53,13 @@ def winning_move(board, turn, row, col):
     up_count = 1
     down_count = 1
     # above of the newest piece
-    while (row - up_count >= 0) and (up_count < STREAK) and board[row-up_count][col] == turn:
+    while (row - up_count >= 0) and (board[row-up_count][col] == turn) and (up_count < STREAK):
         up_count += 1
         streak_count += 1
         if streak_count >= STREAK:
             return True
     # below of the newest piece
-    while (row + down_count < ROW_COUNT) and (down_count < STREAK) and board[row+down_count][col] == turn:
+    while (row + down_count < ROW_COUNT) and (board[row+down_count][col] == turn) and (down_count < STREAK):
         down_count += 1
         streak_count += 1
         if streak_count >= STREAK:
@@ -70,13 +70,13 @@ def winning_move(board, turn, row, col):
     up_right_count = 1
     down_left_count = 1
     # up right direction
-    while (row - up_right_count >= 0) and (col + up_right_count < COLUMN_COUNT) and (up_right_count < STREAK) and board[row-up_right_count][col+up_right_count] == turn:
+    while (row - up_right_count >= 0) and (col + up_right_count < COLUMN_COUNT) and (board[row-up_right_count][col+up_right_count] == turn) and (up_right_count < STREAK):
         up_right_count += 1
         streak_count += 1
         if streak_count >= STREAK:
             return True
     # down left direction
-    while (row + down_left_count < ROW_COUNT) and (col - down_left_count >= 0) and (down_left_count < STREAK) and board[row+down_left_count][col-down_left_count] == turn:
+    while (row + down_left_count < ROW_COUNT) and (col - down_left_count >= 0) and (board[row+down_left_count][col-down_left_count] == turn)  and (down_left_count < STREAK):
         down_left_count += 1
         streak_count += 1
         if streak_count >= STREAK:
@@ -87,13 +87,13 @@ def winning_move(board, turn, row, col):
     up_left_count = 1
     down_right_count = 1
     # up left direction
-    while (row - up_left_count >= 0) and (col - up_left_count >= 0) and (up_left_count < STREAK) and board[row-up_left_count][col-up_left_count] == turn:
+    while (row - up_left_count >= 0) and (col - up_left_count >= 0) and (board[row-up_left_count][col-up_left_count] == turn) and (up_left_count < STREAK):
         up_left_count += 1
         streak_count += 1
         if streak_count >= STREAK:
             return True
     # down right direction
-    while (row + down_right_count < ROW_COUNT) and (col + down_right_count < COLUMN_COUNT) and (down_right_count < STREAK) and board[row+down_right_count][col+down_right_count] == turn:
+    while (row + down_right_count < ROW_COUNT) and (col + down_right_count < COLUMN_COUNT) and (board[row+down_right_count][col+down_right_count] == turn) and (down_right_count < STREAK):
         down_right_count += 1
         streak_count += 1
         if streak_count >= STREAK:
