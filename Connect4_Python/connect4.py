@@ -2,10 +2,13 @@ import numpy as np
 import pygame
 import sys
 
-# board dimensions
-COLUMN_COUNT = 13
+# Number of columns and rows
+COLUMN_COUNT = 8
 ROW_COUNT = COLUMN_COUNT - 1
 
+STREAK = 5
+
+# Colors
 P1_COLOR = (240,60,60)
 P2_COLOR = (230,177,52)
 BOARD_COLOR = (54,140,180)
@@ -25,30 +28,77 @@ def get_next_open_row(board, col):
         if board[ROW_COUNT - r - 1][col] == 0:
             return ROW_COUNT - r - 1
 
-def winning_move(board, piece):
+# Check if either player has winning streak
+def winning_move(board, turn, row, col):
+    
     # check horizontal locations for win
-    for c in range(COLUMN_COUNT-3):
-        for r in range(ROW_COUNT):
-            if board[r][c] == piece and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
-                return True
+    streak_count = 1
+    right_count = 1
+    left_count = 1
+    # right of the newest piece
+    while (col + right_count < COLUMN_COUNT) and (right_count < STREAK) and board[row][col+right_count] == turn:
+        right_count += 1
+        streak_count += 1
+        if streak_count >= STREAK:
+            return True
+    # left of the newest piece
+    while (col - left_count >= 0) and (left_count < STREAK) and board[row][col-left_count] == turn:
+        left_count += 1
+        streak_count += 1
+        if streak_count >= STREAK:
+            return True
 
     # check vertical locations for win
-    for r in range(ROW_COUNT-3):
-        for c in range(COLUMN_COUNT):
-            if board[r][c] == piece and board[r+1][c] == piece and board[r+2][c] == piece and board[r+3][c] == piece:
-                return True
+    streak_count = 1
+    up_count = 1
+    down_count = 1
+    # above of the newest piece
+    while (row - up_count >= 0) and (up_count < STREAK) and board[row-up_count][col] == turn:
+        up_count += 1
+        streak_count += 1
+        if streak_count >= STREAK:
+            return True
+    # below of the newest piece
+    while (row + down_count < ROW_COUNT) and (down_count < STREAK) and board[row+down_count][col] == turn:
+        down_count += 1
+        streak_count += 1
+        if streak_count >= STREAK:
+            return True
 
-    # check positively sloped diagonals
-    for c in range(COLUMN_COUNT-3):
-        for r in range(ROW_COUNT-3):    
-            if board[r][c] == piece and board[r+1][c+1] == piece and board[r+2][c+2] == piece and board[r+3][c+3] == piece:
-                return True
+    # check positive diagonal locations for win
+    streak_count = 1
+    up_right_count = 1
+    down_left_count = 1
+    # up right direction
+    while (row - up_right_count >= 0) and (col + up_right_count < COLUMN_COUNT) and (up_right_count < STREAK) and board[row-up_right_count][col+up_right_count] == turn:
+        up_right_count += 1
+        streak_count += 1
+        if streak_count >= STREAK:
+            return True
+    # down left direction
+    while (row + down_left_count < ROW_COUNT) and (col - down_left_count >= 0) and (down_left_count < STREAK) and board[row+down_left_count][col-down_left_count] == turn:
+        down_left_count += 1
+        streak_count += 1
+        if streak_count >= STREAK:
+            return True
+    
+    # check negative diagonal locations for win
+    streak_count = 1
+    up_left_count = 1
+    down_right_count = 1
+    # up left direction
+    while (row - up_left_count >= 0) and (col - up_left_count >= 0) and (up_left_count < STREAK) and board[row-up_left_count][col-up_left_count] == turn:
+        up_left_count += 1
+        streak_count += 1
+        if streak_count >= STREAK:
+            return True
+    # down right direction
+    while (row + down_right_count < ROW_COUNT) and (col + down_right_count < COLUMN_COUNT) and (down_right_count < STREAK) and board[row+down_right_count][col+down_right_count] == turn:
+        down_right_count += 1
+        streak_count += 1
+        if streak_count >= STREAK:
+            return True
 
-    # check negatively sloped diagonals
-    for c in range(COLUMN_COUNT-3):
-        for r in range(3, ROW_COUNT):    
-            if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
-                return True
 
 def draw_board(board):
     pygame.draw.rect(screen, BOARD_COLOR, (0, SQUARESIZE, WIDTH, WIDTH-SQUARESIZE))
@@ -105,7 +155,7 @@ while not game_over:
                     row = get_next_open_row(board, col)
                     board[row][col] = 1
 
-                    if winning_move(board, 1):
+                    if winning_move(board, 1, row, col):
                         label = myfont.render("Player 1 wins!", 1, (255,255,255))
                         screen.blit(label, (WIDTH//2 - SQUARESIZE//0.6,SQUARESIZE//4))
                         game_over = True
@@ -118,7 +168,7 @@ while not game_over:
                     row = get_next_open_row(board, col)
                     board[row][col] = 2
 
-                    if winning_move(board, 2):
+                    if winning_move(board, 2, row, col):
                         label = myfont.render("Player 2 wins!", 1, (255,255,255))
                         screen.blit(label, (WIDTH//2 - SQUARESIZE//0.6,SQUARESIZE//4))
                         game_over = True
