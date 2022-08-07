@@ -3,10 +3,10 @@ import pygame
 import sys
 
 # Number of columns and rows
-COLUMN_COUNT = 8
+COLUMN_COUNT = 7
 ROW_COUNT = COLUMN_COUNT - 1
 
-STREAK = 5
+STREAK = 4
 
 # Colors
 P1_COLOR = (240,60,60)
