@@ -20,13 +20,13 @@ def drop_piece(board, row, col, piece):
 
 # check if the chosen column still have space for the next move
 def is_valid_location(board, col):
-    return board[ROW_COUNT-1][col] == 0
+    return board[0][col] == 0
 
 # find the bottom most empty slot in a column
 def get_next_open_row(board, col):
     for r in range(ROW_COUNT):
-        if board[r][col] == 0:
-            return r
+        if board[ROW_COUNT - r - 1][col] == 0:
+            return ROW_COUNT - r - 1
 
 # print board in the descending order
 def print_board(board):
@@ -61,7 +61,13 @@ def draw_board(board):
     for c in range(COLUMN_COUNT):
         for r in range(ROW_COUNT):
             pygame.draw.rect(screen, BOARD_COLOR, (c*SQUARESIZE, SQUARESIZE+r*SQUARESIZE, SQUARESIZE, SQUARESIZE))
-            pygame.draw.circle(screen, SCREEN_COLOR, (c*SQUARESIZE+SQUARESIZE//2, r*SQUARESIZE+SQUARESIZE+SQUARESIZE//2), RADIUS)
+            if board[r][c] == 1:
+                pygame.draw.circle(screen, P1_COLOR, (c*SQUARESIZE+SQUARESIZE//2, r*SQUARESIZE+SQUARESIZE+SQUARESIZE//2), RADIUS)
+            elif board[r][c] == 2:
+                pygame.draw.circle(screen, P2_COLOR, (c*SQUARESIZE+SQUARESIZE//2, r*SQUARESIZE+SQUARESIZE+SQUARESIZE//2), RADIUS)
+            else:
+                pygame.draw.circle(screen, SCREEN_COLOR, (c*SQUARESIZE+SQUARESIZE//2, r*SQUARESIZE+SQUARESIZE+SQUARESIZE//2), RADIUS)
+    pygame.display.update()
 
 
 board = create_board()
@@ -90,11 +96,19 @@ while not game_over:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
+        if event.type == pygame.MOUSEMOTION:
+            pygame.draw.rect(screen, SCREEN_COLOR, (0, 0, COLUMN_COUNT*SQUARESIZE, SQUARESIZE))
+            posx = event.pos[0]
+            if turn == 1:
+                pygame.draw.circle(screen, P1_COLOR, (posx, SQUARESIZE//2), RADIUS)
+            else:
+                pygame.draw.circle(screen, P2_COLOR, (posx, SQUARESIZE//2), RADIUS)
+            pygame.display.update()
         if event.type == pygame.MOUSEBUTTONDOWN:
+            posx = event.pos[0]
+            col = posx // SQUARESIZE
             # Ask for player 1 input
-            if turn == 0:
-                col = int(input("Player 1 Make your selection (0-6):"))
-
+            if turn == 1:
                 # check location validity and drop piece
                 if is_valid_location(board, col):
                     row = get_next_open_row(board, col)
@@ -104,11 +118,10 @@ while not game_over:
                         print("Player 1 wins! Congrats!")
                         game_over = True
 
-                print_board(board)
+                turn = 2
 
             # Ask for player 2 input
             else:
-                col = int(input("Player 2 Make your selection (0-6):"))
 
                 # check location validity and drop piece
                 if is_valid_location(board, col):
@@ -119,8 +132,6 @@ while not game_over:
                         print("Player 2 wins! Congrats!")
                         game_over = True
 
-                print_board(board)
-
-            # Alternating between players
-            turn += 1 
-            turn = turn % 2 
+                turn = 1
+            print(board)
+            draw_board(board)
