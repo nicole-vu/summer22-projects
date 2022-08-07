@@ -3,20 +3,17 @@ import pygame
 import sys
 
 # board dimensions
-ROW_COUNT = 6
-COLUMN_COUNT = 7
+COLUMN_COUNT = 13
+ROW_COUNT = COLUMN_COUNT - 1
 
-P1_COLOR = (0,255,0)
-P2_COLOR = (255,0,0)
-BOARD_COLOR = (0,0,255)
-SCREEN_COLOR = (0,0,0)
+P1_COLOR = (240,60,60)
+P2_COLOR = (230,177,52)
+BOARD_COLOR = (54,140,180)
+SCREEN_COLOR = (84,73,75)
 
 def create_board():
     board = np.zeros((ROW_COUNT, COLUMN_COUNT)) # create a zero matrix of 6 rows and 7 columns
     return board
-
-def drop_piece(board, row, col, piece):
-    board[row][col] = piece
 
 # check if the chosen column still have space for the next move
 def is_valid_location(board, col):
@@ -27,10 +24,6 @@ def get_next_open_row(board, col):
     for r in range(ROW_COUNT):
         if board[ROW_COUNT - r - 1][col] == 0:
             return ROW_COUNT - r - 1
-
-# print board in the descending order
-def print_board(board):
-    print(np.flip(board,0))
 
 def winning_move(board, piece):
     # check horizontal locations for win
@@ -58,9 +51,9 @@ def winning_move(board, piece):
                 return True
 
 def draw_board(board):
+    pygame.draw.rect(screen, BOARD_COLOR, (0, SQUARESIZE, WIDTH, WIDTH-SQUARESIZE))
     for c in range(COLUMN_COUNT):
         for r in range(ROW_COUNT):
-            pygame.draw.rect(screen, BOARD_COLOR, (c*SQUARESIZE, SQUARESIZE+r*SQUARESIZE, SQUARESIZE, SQUARESIZE))
             if board[r][c] == 1:
                 pygame.draw.circle(screen, P1_COLOR, (c*SQUARESIZE+SQUARESIZE//2, r*SQUARESIZE+SQUARESIZE+SQUARESIZE//2), RADIUS)
             elif board[r][c] == 2:
@@ -71,27 +64,23 @@ def draw_board(board):
 
 
 board = create_board()
-print_board(board)
 game_over = False
 turn = 1
 
 # initialize board
 pygame.init()
 
-SQUARESIZE = 100
+WIDTH = 700
+SQUARESIZE = WIDTH // COLUMN_COUNT
+RADIUS = SQUARESIZE//2.5
 
-width = COLUMN_COUNT * SQUARESIZE
-height = (ROW_COUNT+1) * SQUARESIZE
-
-size = (width, height)
-
-RADIUS = SQUARESIZE//2 - 5 
-
-screen = pygame.display.set_mode(size)
+screen = pygame.display.set_mode((WIDTH, WIDTH))
+screen.fill(SCREEN_COLOR)
+pygame.display.set_caption("Connect 4")
 draw_board(board)
 pygame.display.update()
 
-myfont = pygame.font.SysFont("monospace", 75)
+myfont = pygame.font.SysFont("Century Gothic", SQUARESIZE//2)
 
 while not game_over:
 
@@ -99,7 +88,7 @@ while not game_over:
         if event.type == pygame.QUIT:
             sys.exit()
         if event.type == pygame.MOUSEMOTION:
-            pygame.draw.rect(screen, SCREEN_COLOR, (0, 0, COLUMN_COUNT*SQUARESIZE, SQUARESIZE))
+            pygame.draw.rect(screen, SCREEN_COLOR, (0, 0, WIDTH, SQUARESIZE))
             posx = event.pos[0]
             if turn == 1:
                 pygame.draw.circle(screen, P1_COLOR, (posx, SQUARESIZE//2), RADIUS)
@@ -107,19 +96,18 @@ while not game_over:
                 pygame.draw.circle(screen, P2_COLOR, (posx, SQUARESIZE//2), RADIUS)
             pygame.display.update()
         if event.type == pygame.MOUSEBUTTONDOWN:
-            pygame.draw.rect(screen, SCREEN_COLOR, (0, 0, COLUMN_COUNT*SQUARESIZE, SQUARESIZE))
-            posx = event.pos[0]
-            col = posx // SQUARESIZE
+            pygame.draw.rect(screen, SCREEN_COLOR, (0, 0, WIDTH, SQUARESIZE))
+            col = event.pos[0] // SQUARESIZE
             # Ask for player 1 input
             if turn == 1:
                 # check location validity and drop piece
                 if is_valid_location(board, col):
                     row = get_next_open_row(board, col)
-                    drop_piece(board, row, col, 1)
+                    board[row][col] = 1
 
                     if winning_move(board, 1):
-                        label = myfont.render("Player 1 wins!", 1, P1_COLOR)
-                        screen.blit(label, (40,10))
+                        label = myfont.render("Player 1 wins!", 1, (255,255,255))
+                        screen.blit(label, (WIDTH//2 - SQUARESIZE//0.6,SQUARESIZE//4))
                         game_over = True
                 turn = 2
 
@@ -128,11 +116,11 @@ while not game_over:
                 # check location validity and drop piece
                 if is_valid_location(board, col):
                     row = get_next_open_row(board, col)
-                    drop_piece(board, row, col, 2)
+                    board[row][col] = 2
 
                     if winning_move(board, 2):
-                        label = myfont.render("Player 2 wins!", 1, P2_COLOR)
-                        screen.blit(label, (40,10))
+                        label = myfont.render("Player 2 wins!", 1, (255,255,255))
+                        screen.blit(label, (WIDTH//2 - SQUARESIZE//0.6,SQUARESIZE//4))
                         game_over = True
                 turn = 1
 
