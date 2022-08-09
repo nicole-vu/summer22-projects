@@ -16,16 +16,17 @@ shapes: S, Z, I, O, J, L, T
 represented in order by 0 - 6
 """
 
+pygame.font.init()
 
 # GLOBAL STATIC VARS
 S_WIDTH = 800 # screen width
-S_HEIGHT = 700 # screen height
-PLAY_WIDTH = 300 # meaning 300//10 = 30 width per block
-PLAY_HEIGHT = 600 # meaning 600//20 = 30 height per block
-BLOCK_SIZE = 30
+S_HEIGHT = 600 # screen height
+PLAY_WIDTH = 250 # meaning 300//10 = 30 width per block
+PLAY_HEIGHT = 500 # meaning 600//20 = 30 height per block
+BLOCK_SIZE = 25
 
 TOP_LEFT_X = (S_WIDTH - PLAY_WIDTH) // 2
-TOP_LEFT_Y = (S_HEIGHT - PLAY_HEIGHT)
+TOP_LEFT_Y = S_HEIGHT - PLAY_HEIGHT - 25
 
 # SHAPE FORMATS
 # each sublist is a different rotation of the shape, 0 represents the blocks of the actual shape
@@ -196,8 +197,11 @@ def get_shape():
     return Piece(5, 0, random.choice(shapes))
 
 
-def draw_text_middle(text, size, color, surface):
-    pass
+def draw_text_middle(surface, text, size, color):
+    font = pygame.font.SysFont('centurygothic', size, bold = True)
+    label = font.render(text, 1, color)
+
+    surface.blit(label, (TOP_LEFT_X+PLAY_WIDTH/2 - (label.get_width()/2), TOP_LEFT_Y+ PLAY_HEIGHT/2 - (label.get_height()/2)))
 
 # draw the lines of the grids
 def draw_grid(surface, row, col):
@@ -208,15 +212,35 @@ def draw_grid(surface, row, col):
 
 
 def clear_rows(grid, locked):
-    pass
+    inc = 0
+    for r in range(len(grid)-1, -1, -1): # loop through the grid backward
+        row_value = grid[r]
+        if (0,0,0) not in row_value:
+            inc += 1
+            ind = r
+            for c in range(len(row_value)):
+                try:
+                    del locked[(c,r)]
+                except:
+                    continue
+
+    if inc > 0:
+        for key in sorted(list(locked), key = lambda x: x[1])[::-1]:
+            x, y = key
+            if y < ind: # above the row we deleted
+                newKey = (x, y+inc)
+                locked[newKey] = locked.pop(key)
+
+    return inc
+
 
 def draw_next_shape(shape, surface):
-    font = pygame.font.SysFont('centurygothic', 30)
+    font = pygame.font.SysFont('centurygothic', 20)
     label = font.render('Next Shape', 1, (255,255,255))
 
     # position of the next piece display
     sx = TOP_LEFT_X + PLAY_WIDTH + 50
-    sy = TOP_LEFT_Y + PLAY_HEIGHT/2 - 100
+    sy = TOP_LEFT_Y + PLAY_HEIGHT/2 - 150
     format = shape.shape[shape.rotation % len(shape.shape)]
 
     for r, line in enumerate(format):
@@ -228,14 +252,43 @@ def draw_next_shape(shape, surface):
     surface.blit(label, (sx + 10, sy - 30))
 
 
-def draw_window(surface):
+def update_score(nscore):
+    score = max_score()
+
+    with open('score.txt', 'w') as f:
+        if int(score) > nscore:
+            f.write(str(score))
+        else:
+            f.write(str(nscore))
+
+
+def max_score():
+    with open('score.txt','r') as f:
+        lines = f.readlines()
+        score = lines[0].strip() 
+
+    return score
+
+
+def draw_window(surface, grid, score, last_score = 0):
     surface.fill((0,0,0))
 
-    pygame.font.init()
-    font = pygame.font.SysFont("centurygothic", 60)
+    font = pygame.font.SysFont("centurygothic", 40)
     label = font.render("Tetris", 1, (255,255,255))
 
-    surface.blit(label, (TOP_LEFT_X + PLAY_WIDTH/2 - (label.get_width()/2), 30))
+    surface.blit(label, (TOP_LEFT_X + PLAY_WIDTH/2 - (label.get_width()/2), 20))
+
+    # Current score
+    font = pygame.font.SysFont("centurygothic", 20)
+    label = font.render("Score: " + str(score), 1, (255,255,255))
+
+    surface.blit(label, (TOP_LEFT_X + PLAY_WIDTH + 60, TOP_LEFT_Y + PLAY_HEIGHT/2))
+
+    # Last score
+    font = pygame.font.SysFont("centurygothic", 20)
+    label = font.render("High score: " + last_score, 1, (255,255,255))
+
+    surface.blit(label, (TOP_LEFT_X - 200, TOP_LEFT_Y + 250))
 
     for r in range(len(grid)):
         for c in range(len(grid[r])):
@@ -247,6 +300,7 @@ def draw_window(surface):
 
 
 def main():
+    last_score = max_score()
     global grid
     locked_positions = {}
     grid = create_grid(locked_positions)
@@ -258,11 +312,19 @@ def main():
     clock = pygame.time.Clock()
     fall_time = 0
     fall_speed = 0.27
+    level_time = 0
+    score = 0
 
     while run:
         grid = create_grid(locked_positions)
         fall_time += clock.get_rawtime()
+        level_time += clock.get_rawtime()
         clock.tick() # make sure that it runs with the same speed in every computers
+
+        if level_time/1000 > 5 :
+            level_time = 0
+            if level_time > 0.12:
+                level_time -= 0.005
 
         if fall_time/1000 > fall_speed:
             fall_time = 0
@@ -306,18 +368,32 @@ def main():
             current_piece = next_piece
             next_piece = get_shape()
             change_piece = False
+            score += clear_rows(grid, locked_positions) * 10
 
-        draw_window(win)
+        draw_window(win, grid, score, last_score)
         draw_next_shape(next_piece, win)
         pygame.display.update()
 
         if check_lost(locked_positions):
+            draw_text_middle(win, "YOU LOST!", 80, (255,255,255))
+            pygame.display.update()
+            pygame.time.delay(1500)
             run = False
+            update_score(score)
     
     pygame.display.quit()
 
 def main_menu():
-    main()
+    run = True
+    while run:
+        win.fill((0,0,0))
+        draw_text_middle(win, 'Please Any Key To Play', 60, (255,255,255))
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.KEYDOWN:
+                main()
 
 win = pygame.display.set_mode((S_WIDTH, S_HEIGHT))
 pygame.display.set_caption("Tetris")
