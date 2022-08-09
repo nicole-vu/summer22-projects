@@ -201,7 +201,8 @@ def draw_text_middle(surface, text, size, color):
     font = pygame.font.SysFont('centurygothic', size, bold = True)
     label = font.render(text, 1, color)
 
-    surface.blit(label, (TOP_LEFT_X+PLAY_WIDTH/2 - (label.get_width()/2), TOP_LEFT_Y+ PLAY_HEIGHT/2 - (label.get_height()/2)))
+    surface.blit(label, (S_WIDTH/2 - (label.get_width()/2), S_HEIGHT/2 - (label.get_height()/2)))
+
 
 # draw the lines of the grids
 def draw_grid(surface, row, col):
@@ -330,31 +331,41 @@ def main():
             fall_time = 0
             current_piece.y += 1
             if not(valid_space(current_piece, grid)) and current_piece.y > 0:
+                print("Invalid y")
+                print(current_piece.y)
                 current_piece.y -= 1 # if the piece reached an invalid position, reverse the move
                 change_piece = True # call change_piece to lock the position and allow new piece to fall
+                print("Locked:")
+                print(locked_positions)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    current_piece.x -= 1
-                    if not(valid_space(current_piece, grid)):
-                        current_piece.x += 1
-                if event.key == pygame.K_RIGHT:
-                    current_piece.x += 1
-                    if not(valid_space(current_piece, grid)):
-                        current_piece.x -= 1
-                if event.key == pygame.K_DOWN:
-                    current_piece.y += 1
-                    if not(valid_space(current_piece, grid)):
-                        current_piece.y -= 1
-                if event.key == pygame.K_UP:
-                    current_piece.rotation += 1
-                    if not(valid_space(current_piece, grid)):
-                        current_piece.rotation -= 1
         
+        if current_piece.y > 0:
+            keys = pygame.key.get_pressed()
+            delay = 25
+            if keys[pygame.K_LEFT]:
+                current_piece.x -= 1
+                if not(valid_space(current_piece, grid)):
+                    current_piece.x += 1
+                pygame.time.delay(delay*3)
+            if keys[pygame.K_RIGHT]:
+                current_piece.x += 1
+                if not(valid_space(current_piece, grid)):
+                    current_piece.x -= 1
+                pygame.time.delay(delay*3)
+            if keys[pygame.K_UP]:
+                current_piece.rotation += 1
+                if not(valid_space(current_piece, grid)):
+                    current_piece.rotation -= 1
+                pygame.time.delay(delay*5)
+            if keys[pygame.K_DOWN]:
+                current_piece.y += 1
+                if not(valid_space(current_piece, grid)):
+                    current_piece.y -= 1
+                pygame.time.delay(delay)
+
         shape_pos = convert_shape_format(current_piece)
 
         for i in range(len(shape_pos)):
@@ -375,7 +386,9 @@ def main():
         pygame.display.update()
 
         if check_lost(locked_positions):
-            draw_text_middle(win, "YOU LOST!", 80, (255,255,255))
+            print("Locked:")
+            print(locked_positions)
+            draw_text_middle(win, "YOU LOST!", 70, (255,255,255))
             pygame.display.update()
             pygame.time.delay(1500)
             run = False
@@ -387,7 +400,7 @@ def main_menu():
     run = True
     while run:
         win.fill((0,0,0))
-        draw_text_middle(win, 'Please Any Key To Play', 60, (255,255,255))
+        draw_text_middle(win, 'Please Any Key To Play', 50, (255,255,255))
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
