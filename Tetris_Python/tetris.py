@@ -167,7 +167,7 @@ def convert_shape_format(shape):
                 positions.append((shape.x + c, shape.y + r))
 
     for r, pos_value in enumerate(positions):
-        positions[r] = (pos_value[0] - 2, pos_value[1] - 4) # offset so the shape is centered 
+        positions[r] = (pos_value[0] - 2, pos_value[1] - 3) # offset so the shape is centered 
 
     return positions
 
@@ -330,13 +330,12 @@ def main():
         if fall_time/1000 > fall_speed:
             fall_time = 0
             current_piece.y += 1
+
+            formatted = convert_shape_format(current_piece)
+
             if not(valid_space(current_piece, grid)) and current_piece.y > 0:
-                print("Invalid y")
-                print(current_piece.y)
                 current_piece.y -= 1 # if the piece reached an invalid position, reverse the move
                 change_piece = True # call change_piece to lock the position and allow new piece to fall
-                print("Locked:")
-                print(locked_positions)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -344,7 +343,7 @@ def main():
         
         if current_piece.y > 0:
             keys = pygame.key.get_pressed()
-            delay = 25
+            delay = 30
             if keys[pygame.K_LEFT]:
                 current_piece.x -= 1
                 if not(valid_space(current_piece, grid)):
@@ -374,6 +373,7 @@ def main():
                 grid[y][x] = current_piece.color
 
         if change_piece:
+        
             for pos in shape_pos:
                 locked_positions[(pos[0], pos[1])] = current_piece.color
             current_piece = next_piece
@@ -386,8 +386,10 @@ def main():
         pygame.display.update()
 
         if check_lost(locked_positions):
+            #---------------
             print("Locked:")
             print(locked_positions)
+            #---------------
             draw_text_middle(win, "YOU LOST!", 70, (255,255,255))
             pygame.display.update()
             pygame.time.delay(1500)
